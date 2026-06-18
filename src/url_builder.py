@@ -1,5 +1,7 @@
 """URL construction and category detection utilities."""
 
+import urllib.parse
+
 from src.config import (
     HERO_DETAIL_TMPL,
     EQUIP_DETAIL_TMPL,
@@ -49,11 +51,14 @@ def detect_category(url: str) -> str:
     Raises:
         ValueError: If the URL does not match any known category.
     """
-    if "/yx" in url:
+    # Parse the URL path and check the filename (last path segment)
+    path = urllib.parse.urlparse(url).path
+    filename = path.rstrip("/").split("/")[-1]
+    if filename.startswith("yx"):
         return "heroes"
-    if "/zb" in url:
+    if filename.startswith("zb"):
         return "equipment"
-    if "/fw" in url:
+    if filename.startswith("fw"):
         return "runes"
     raise ValueError(f"Unknown category for URL: {url}")
 
@@ -72,4 +77,7 @@ def get_category_dir(category: str) -> str:
         "equipment": EQUIP_OUTPUT_DIR,
         "runes": RUNE_OUTPUT_DIR,
     }
-    return mapping[category]
+    value = mapping.get(category)
+    if value is None:
+        raise ValueError(f"Unknown category: {category}")
+    return value

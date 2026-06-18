@@ -24,11 +24,13 @@ class TestUrlBuilder:
         urls = build_equip_urls()
         assert len(urls) == 162
         assert urls[0] == "https://www.ali213.net/zt/LOL/wiki/zb1.html"
+        assert urls[-1] == "https://www.ali213.net/zt/LOL/wiki/zb162.html"
 
     def test_build_rune_urls(self):
         urls = build_rune_urls()
         assert len(urls) == 63
         assert urls[0] == "https://www.ali213.net/zt/LOL/wiki/fw1.html"
+        assert urls[-1] == "https://www.ali213.net/zt/LOL/wiki/fw63.html"
 
     def test_build_all_urls(self):
         hero, equip, rune = build_all_urls()
@@ -46,13 +48,10 @@ class TestUrlBuilder:
             detect_category("https://www.ali213.net/zt/LOL/wiki/other.html")
 
     def test_get_category_dir(self):
-        assert get_category_dir("heroes") is not None
-        assert get_category_dir("equipment") is not None
-        assert get_category_dir("runes") is not None
-        # Verify they return different paths
-        dirs = {
-            get_category_dir("heroes"),
-            get_category_dir("equipment"),
-            get_category_dir("runes"),
-        }
-        assert len(dirs) == 3
+        assert get_category_dir("heroes") == "data/heroes"
+        assert get_category_dir("equipment") == "data/equipment"
+        assert get_category_dir("runes") == "data/runes"
+
+    def test_get_category_dir_unknown(self):
+        with pytest.raises(ValueError, match="Unknown category"):
+            get_category_dir("unknown")
