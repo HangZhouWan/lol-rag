@@ -15,21 +15,25 @@ class Fetcher:
         max_retries: int = MAX_RETRIES,
         backoff: list[float] | None = None,
         concurrency: int = CONCURRENCY,
+        timeout: float = REQUEST_TIMEOUT,
     ):
         self.delay = delay
         self.max_retries = max_retries
         self.backoff = backoff or RETRY_BACKOFF
         self.concurrency = concurrency
+        self.timeout = timeout
         self._semaphore = asyncio.Semaphore(concurrency)
+        self._rate_limit_lock = asyncio.Lock()
         self._last_request_time = 0.0
 
     async def _rate_limit(self):
         """确保请求间隔 ≥ delay 秒"""
-        now = asyncio.get_event_loop().time()
-        wait = self._last_request_time + self.delay - now
-        if wait > 0:
-            await asyncio.sleep(wait)
-        self._last_request_time = asyncio.get_event_loop().time()
+        async with self._rate_limit_lock:
+            now = asyncio.get_event_loop().time()
+            wait = self._last_request_time + self.delay - now
+            if wait > 0:
+                await asyncio.sleep(wait)
+            self._last_request_time = asyncio.get_event_loop().time()
 
     async def fetch_one(
         self, session: aiohttp.ClientSession, url: str
@@ -39,9 +43,9 @@ class Fetcher:
 
         for attempt in range(self.max_retries + 1):
             try:
-                await self._rate_limit()
                 async with self._semaphore:
-                    async with session.get(url, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
+                    await self._rate_limit()
+                    async with session.get(url, timeout=aiohttp.ClientTimeout(total=self.timeout)) as resp:
                         if resp.status == 200:
                             html = await resp.text()
                             logger.debug(f"✓ {url} ({attempt + 1} attempts)")
