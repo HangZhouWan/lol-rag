@@ -22,6 +22,10 @@ class FetchRepository:
         self._record_path = record_path
         self.records: dict[str, FetchRecord] = {}
 
+    @property
+    def record_path(self) -> str:
+        return self._record_path
+
     def load(self) -> None:
         """从 JSON 文件加载抓取记录。"""
         if not os.path.exists(self._record_path):
@@ -80,6 +84,8 @@ class FetchRepository:
             rec.output_file = output_file
             rec.fetched_at = now
             rec.error = None
+            rec.retries = 0
+            rec.last_attempt = now
         else:
             self.records[url] = FetchRecord(
                 url=url, category=category, name=name,

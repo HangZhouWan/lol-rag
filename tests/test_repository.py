@@ -4,6 +4,7 @@ import os
 import tempfile
 import pytest
 from src.repository import FetchRepository
+from src.config import MAX_RETRIES
 
 
 class TestFetchRepository:
@@ -41,12 +42,15 @@ class TestFetchRepository:
 
     def test_should_retry_failed_under_limit(self, repo):
         repo.record_failure("http://test.com/yx1.html", "heroes", "Timeout")
-        repo.records["http://test.com/yx1.html"].retries = 1
+        repo.record_failure("http://test.com/yx1.html", "heroes", "Timeout")
+        # retries = 2, MAX_RETRIES = 3 → 2 < 3 → should retry
         assert repo.should_fetch("http://test.com/yx1.html") is True
 
     def test_should_skip_failed_at_limit(self, repo):
         repo.record_failure("http://test.com/yx1.html", "heroes", "Timeout")
-        repo.records["http://test.com/yx1.html"].retries = 3
+        repo.record_failure("http://test.com/yx1.html", "heroes", "Timeout")
+        repo.record_failure("http://test.com/yx1.html", "heroes", "Timeout")
+        # retries = 3, MAX_RETRIES = 3 → 3 < 3 is False → should not retry
         assert repo.should_fetch("http://test.com/yx1.html") is False
 
     def test_get_pending_urls(self, repo):
@@ -55,14 +59,29 @@ class TestFetchRepository:
         # yx2 is marked success but file doesn't exist, so it stays pending
         # yx1 is new, so it's pending too
         pending = repo.get_pending_urls(urls)
-        assert "http://test.com/yx1.html" in pending
+        assert pending == ["http://test.com/yx1.html", "http://test.com/yx2.html"]
+        assert len(pending) == 2
 
     def test_save_and_reload(self, repo):
         repo.record_success("http://test.com/yx1.html", "heroes", "安妮", "/tmp/安妮.md")
         repo.save()
 
-        repo2 = FetchRepository(record_path=repo._record_path)
+        repo2 = FetchRepository(record_path=repo.record_path)
         repo2.load()
         assert "http://test.com/yx1.html" in repo2.records
         assert repo2.records["http://test.com/yx1.html"].status == "success"
         assert repo2.records["http://test.com/yx1.html"].name == "安妮"
+
+    def test_record_failure_new_url(self, repo):
+        repo.record_failure("http://test.com/yx_new.html", "heroes", "ConnectionError")
+        rec = repo.records["http://test.com/yx_new.html"]
+        assert rec.status == "failed"
+        assert rec.retries == 1
+        assert rec.error == "ConnectionError"
+        assert rec.last_attempt is not None
+
+    def test_load_missing_file(self, repo):
+        # By default repo fixture uses a non-existent file path; load() should handle it gracefully.
+        new_repo = FetchRepository(record_path="/nonexistent/path/.fetch_record.json")
+        new_repo.load()
+        assert new_repo.records == {}
