@@ -85,4 +85,6 @@ class FetchRecord:
 
     @classmethod
     def from_dict(cls, url: str, data: dict) -> "FetchRecord":
+        # data may contain "url" from to_dict(); remove to avoid duplicate
+        data.pop("url", None)
         return cls(url=url, **data)
