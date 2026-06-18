@@ -52,8 +52,13 @@ def parse_hero_page(html: str, url: str, fetched_at: str) -> Hero | None:
         h1 = soup.find("h1")
         title_text = _text(h1).strip()
         parts = title_text.rsplit(" ", 1)
-        name_cn = parts[0] if len(parts) == 2 else title_text
-        name_en = parts[1] if len(parts) == 2 else ""
+        if len(parts) == 2:
+            name_cn = parts[0]
+            name_en = parts[1]
+        else:
+            name_cn = title_text
+            name_en = ""
+            logger.warning("Missing name_en for title: %s", title_text)
 
         img = soup.select_one("img.hero-img, .detail-main img:first-of-type")
         image_url = _src(img)
@@ -62,9 +67,9 @@ def parse_hero_page(html: str, url: str, fetched_at: str) -> Hero | None:
         role = _text(role_el)
 
         story_el = soup.select_one(".story, [class*='story'], .background")
-        background = _text(story_el) if story_el else ""
+        background = _text(story_el)
 
-        initial_table = soup.select_one("#initial, .initial-attrs, table:has(th:contains('攻击力'))")
+        initial_table = soup.select_one("#initial, .initial-attrs, table:first-of-type")
         initial_attrs = _parse_table_to_dict(initial_table)
 
         max_table = soup.select_one("#max, .max-attrs, table:nth-of-type(2)")
@@ -80,7 +85,7 @@ def parse_hero_page(html: str, url: str, fetched_at: str) -> Hero | None:
 
             s_name = _text(div.find("h4") or div.find("h3") or div.find("strong"))
             s_icon = _src(div.find("img"))
-            s_desc = _text(div.find("p:last-of-type") or div.select_one(".desc"))
+            s_desc = _text(div.select_one("p:last-of-type") or div.select_one(".desc"))
             s_cost = _strip_label(_text(div.select_one(".cost, [class*='cost']"))) or None
             s_cd = _strip_label(_text(div.select_one(".cd, [class*='cd'], [class*='cooldown']"))) or None
             s_range = _strip_label(_text(div.select_one(".range, [class*='range']"))) or None
@@ -101,7 +106,7 @@ def parse_hero_page(html: str, url: str, fetched_at: str) -> Hero | None:
             passive_skill=passive_skill, skills=skills,
             source_url=url, fetched_at=fetched_at,
         )
-    except Exception as e:
+    except (AttributeError, TypeError, ValueError, KeyError) as e:
         logger.error(f"Error parsing hero page {url}: {e}")
         return None
 
@@ -142,7 +147,7 @@ def parse_equip_page(html: str, url: str, fetched_at: str) -> Equipment | None:
             recipe=recipe, recommended_heroes=recommended_heroes,
             source_url=url, fetched_at=fetched_at,
         )
-    except Exception as e:
+    except (AttributeError, TypeError, ValueError, KeyError) as e:
         logger.error(f"Error parsing equipment page {url}: {e}")
         return None
 
@@ -164,6 +169,6 @@ def parse_rune_page(html: str, url: str, fetched_at: str) -> Rune | None:
             name=name, icon_url=icon_url, category=category, tier=tier,
             description=description, source_url=url, fetched_at=fetched_at,
         )
-    except Exception as e:
+    except (AttributeError, TypeError, ValueError, KeyError) as e:
         logger.error(f"Error parsing rune page {url}: {e}")
         return None
