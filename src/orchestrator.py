@@ -5,10 +5,7 @@ import logging
 import os
 from datetime import datetime, timezone, timedelta
 
-from src.config import (
-    OUTPUT_DIR, CONCURRENCY, REQUEST_DELAY, MAX_RETRIES, RETRY_BACKOFF,
-    HERO_OUTPUT_DIR, EQUIP_OUTPUT_DIR, RUNE_OUTPUT_DIR,
-)
+from src.config import OUTPUT_DIR, CONCURRENCY, REQUEST_DELAY, MAX_RETRIES, RETRY_BACKOFF
 from src.fetcher import Fetcher
 from src.parser import parse_hero_page, parse_equip_page, parse_rune_page
 from src.repository import FetchRepository
@@ -20,14 +17,6 @@ from src.url_builder import build_all_urls, detect_category, get_category_dir
 
 logger = logging.getLogger(__name__)
 TZ = timezone(timedelta(hours=8))
-
-# Map from config's category dir names (relative to OUTPUT_DIR) to output paths
-_CATEGORY_DIR_MAP = {
-    "heroes": os.path.relpath(HERO_OUTPUT_DIR, OUTPUT_DIR),
-    "equipment": os.path.relpath(EQUIP_OUTPUT_DIR, OUTPUT_DIR),
-    "runes": os.path.relpath(RUNE_OUTPUT_DIR, OUTPUT_DIR),
-}
-
 
 class Orchestrator:
     def __init__(
@@ -50,11 +39,8 @@ class Orchestrator:
         )
 
     def _resolve_category_dir(self, category: str) -> str:
-        """Resolve the absolute output directory for a category under self.output_dir."""
-        rel = _CATEGORY_DIR_MAP.get(category)
-        if rel is None:
-            raise ValueError(f"Unknown category: {category}")
-        return os.path.join(self.output_dir, rel)
+        """Get the output directory path for a category."""
+        return get_category_dir(category)
 
     async def run(self) -> dict:
         """执行完整抓取流水线，返回统计摘要。"""
@@ -79,7 +65,11 @@ class Orchestrator:
         results = await self.fetcher.fetch_all(pending)
 
         # 5-6. 逐条处理
-        now = datetime.now(TZ).isoformat()
+        _CATEGORY_HANDLERS = {
+            "heroes":    (parse_hero_page,  "name_cn", hero_to_markdown),
+            "equipment": (parse_equip_page, "name",    equip_to_markdown),
+            "runes":     (parse_rune_page,  "name",    rune_to_markdown),
+        }
         for url, html, error in results:
             category = detect_category(url)
 
@@ -95,24 +85,13 @@ class Orchestrator:
 
             # 解析
             try:
-                if category == "heroes":
-                    data = parse_hero_page(html, url, now)
-                    if data is None:
-                        raise ValueError("Failed to parse hero page")
-                    name = data.name_cn
-                    content = hero_to_markdown(data)
-                elif category == "equipment":
-                    data = parse_equip_page(html, url, now)
-                    if data is None:
-                        raise ValueError("Failed to parse equipment page")
-                    name = data.name
-                    content = equip_to_markdown(data)
-                else:
-                    data = parse_rune_page(html, url, now)
-                    if data is None:
-                        raise ValueError("Failed to parse rune page")
-                    name = data.name
-                    content = rune_to_markdown(data)
+                parser, name_attr, formatter = _CATEGORY_HANDLERS[category]
+                now = datetime.now(TZ).isoformat()
+                data = parser(html, url, now)
+                if data is None:
+                    raise ValueError(f"Failed to parse {category} page")
+                name = getattr(data, name_attr)
+                content = formatter(data)
             except Exception as e:
                 self.repo.record_failure(url, category, f"Parse error: {e}")
                 stats["failed"] += 1
@@ -123,7 +102,13 @@ class Orchestrator:
             out_dir = self._resolve_category_dir(category)
             filename = sanitize_filename(name) + ".md"
             filepath = os.path.join(out_dir, filename)
-            write_markdown(content, filepath)
+            try:
+                write_markdown(content, filepath)
+            except Exception as e:
+                self.repo.record_failure(url, category, f"Write error: {e}")
+                stats["failed"] += 1
+                logger.warning(f"Write failed for {url}: {e}")
+                continue
 
             # 记录成功
             self.repo.record_success(url, category, name, filepath)
