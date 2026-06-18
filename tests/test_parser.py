@@ -54,9 +54,11 @@ class TestParseHeroPage:
         assert isinstance(hero, Hero)
         assert hero.name_cn == "祖安怒兽"
         assert hero.name_en == "沃里克"
+        assert hero.title == "祖安怒兽 沃里克"
         assert hero.role == "战士"
         assert "沃里克" in hero.background
         assert hero.image_url == "https://img.ali213.net/warwick.png"
+        assert hero.fetched_at == "2026-06-18T10:00:00+08:00"
 
     def test_parse_attrs(self):
         hero = parse_hero_page(HERO_HTML, "http://test.com/yx1.html", "2026-06-18T10:00:00+08:00")
@@ -110,10 +112,13 @@ class TestParseEquipPage:
         equip = parse_equip_page(EQUIP_HTML, "http://test.com/zb1.html", "2026-06-18T10:00:00+08:00")
         assert equip is not None
         assert equip.name == "冰霜之心"
+        assert equip.icon_url == "https://img.ali213.net/ice.png"
         assert equip.tier == "传说"
         assert equip.price == "2700"
         assert len(equip.base_attrs) == 3
         assert "+400 法力值" in equip.base_attrs
+        assert equip.source_url == "http://test.com/zb1.html"
+        assert equip.fetched_at == "2026-06-18T10:00:00+08:00"
 
     def test_parse_passive(self):
         equip = parse_equip_page(EQUIP_HTML, "http://test.com/zb1.html", "2026-06-18T10:00:00+08:00")
@@ -129,6 +134,12 @@ class TestParseEquipPage:
         equip = parse_equip_page(EQUIP_HTML, "http://test.com/zb1.html", "2026-06-18T10:00:00+08:00")
         assert len(equip.recommended_heroes) == 2
         assert "盖伦" in equip.recommended_heroes
+
+    def test_equip_no_active_or_mythic(self):
+        equip = parse_equip_page(EQUIP_HTML, "http://test.com/zb1.html", "2026-06-18T10:00:00+08:00")
+        assert equip is not None
+        assert equip.active_effect is None
+        assert equip.mythic_bonus is None
 
 
 RUNE_HTML = """
@@ -149,6 +160,9 @@ class TestParseRunePage:
         rune = parse_rune_page(RUNE_HTML, "http://test.com/fw1.html", "2026-06-18T10:00:00+08:00")
         assert rune is not None
         assert rune.name == "强攻"
+        assert rune.icon_url == "https://img.ali213.net/pta.png"
         assert rune.category == "精密"
         assert rune.tier == "基石"
         assert "普攻" in rune.description
+        assert rune.source_url == "http://test.com/fw1.html"
+        assert rune.fetched_at == "2026-06-18T10:00:00+08:00"
