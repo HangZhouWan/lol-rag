@@ -1,5 +1,7 @@
 """全局配置常量"""
 
+import os
+
 # 基础 URL
 BASE_URL = "https://www.ali213.net/zt/LOL/wiki/"
 HERO_LIST_URL = f"{BASE_URL}lolyx/"
@@ -14,7 +16,8 @@ RUNE_DETAIL_TMPL = f"{BASE_URL}fw{{id}}.html"
 # 各板块数量
 HERO_COUNT = 153
 EQUIP_COUNT = 162
-RUNE_COUNT = 378 - HERO_COUNT - EQUIP_COUNT  # 63
+TOTAL_ITEMS = 378  # 总目录条目数
+RUNE_COUNT = TOTAL_ITEMS - HERO_COUNT - EQUIP_COUNT  # 63
 
 # HTTP 请求控制
 REQUEST_DELAY = 0.2       # 请求间隔（秒）
@@ -25,7 +28,7 @@ REQUEST_TIMEOUT = 30      # 单请求超时（秒）
 
 # 输出路径
 OUTPUT_DIR = "data"
-HERO_OUTPUT_DIR = f"{OUTPUT_DIR}/heroes"
-EQUIP_OUTPUT_DIR = f"{OUTPUT_DIR}/equipment"
-RUNE_OUTPUT_DIR = f"{OUTPUT_DIR}/runes"
-FETCH_RECORD_FILE = f"{OUTPUT_DIR}/.fetch_record.json"
+HERO_OUTPUT_DIR = os.path.join(OUTPUT_DIR, "heroes")
+EQUIP_OUTPUT_DIR = os.path.join(OUTPUT_DIR, "equipment")
+RUNE_OUTPUT_DIR = os.path.join(OUTPUT_DIR, "runes")
+FETCH_RECORD_FILE = os.path.join(OUTPUT_DIR, ".fetch_record.json")

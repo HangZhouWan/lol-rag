@@ -1,5 +1,7 @@
 """数据模型定义"""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 
@@ -10,7 +12,7 @@ class Skill:
     description: str
     cost: str | None = None
     cooldown: str | None = None
-    range: str | None = None
+    cast_range: str | None = None
 
 
 @dataclass
@@ -70,6 +72,7 @@ class FetchRecord:
 
     def to_dict(self) -> dict:
         return {
+            "url": self.url,
             "category": self.category,
             "name": self.name,
             "output_file": self.output_file,
