@@ -7,4 +7,10 @@ dist/
 build/
 .venv/
 venv/
-data/
+data/*
+!data/chroma_db/
+data/chroma_db/*
+!data/chroma_db/.gitkeep
+.env
+logs/*.log
+!logs/.gitkeep
