@@ -14,7 +14,7 @@ DEEPSEEK_BASE_URL=https://api.deepseek.com
 DEEPSEEK_MODEL=deepseek-chat
 DEEPSEEK_MAX_TOKENS=2048
 DEEPSEEK_TEMPERATURE=0.3
-EMBEDDING_MODEL=BAAI/bge-small-zh-1.5
+EMBEDDING_MODEL=BAAI/bge-small-zh-v1.5
 EMBEDDING_DEVICE=cpu
 EMBEDDING_NORMALIZE=true
 CHROMA_PERSIST_DIR=data/chroma_db
@@ -47,7 +47,7 @@ def test_config_loads_all_values(temp_env_file, monkeypatch):
     assert config.deepseek_model == "deepseek-chat"
     assert config.deepseek_max_tokens == 2048
     assert config.deepseek_temperature == 0.3
-    assert config.embedding_model == "BAAI/bge-small-zh-1.5"
+    assert config.embedding_model == "BAAI/bge-small-zh-v1.5"
     assert config.embedding_device == "cpu"
     assert config.embedding_normalize is True
     assert config.chroma_persist_dir == "data/chroma_db"
@@ -73,7 +73,7 @@ def test_config_default_values():
     assert config.deepseek_model == "deepseek-chat"
     assert config.deepseek_max_tokens == 2048
     assert config.deepseek_temperature == 0.3
-    assert config.embedding_model == "BAAI/bge-small-zh-1.5"
+    assert config.embedding_model == "BAAI/bge-small-zh-v1.5"
     assert config.embedding_device == "cpu"
     assert config.retrieval_top_k == 10
     assert config.rerank_top_k == 3

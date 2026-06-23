@@ -3,8 +3,8 @@ import json
 import os
 import tempfile
 import pytest
-from src.repository import FetchRepository
-from src.config import MAX_RETRIES
+from src.scraper.repository import FetchRepository
+from src.scraper.config import MAX_RETRIES
 
 
 class TestFetchRepository:

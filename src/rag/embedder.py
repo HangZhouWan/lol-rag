@@ -19,7 +19,7 @@ class Embedder:
 
     def __init__(
         self,
-        model_name: str = "BAAI/bge-small-zh-1.5",
+        model_name: str = "BAAI/bge-small-zh-v1.5",
         device: str = "cpu",
         normalize: bool = True,
     ):

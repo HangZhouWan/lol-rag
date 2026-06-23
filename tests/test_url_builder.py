@@ -1,7 +1,7 @@
 """Tests for URL builder module."""
 
 import pytest
-from src.url_builder import (
+from src.scraper.url_builder import (
     build_hero_urls,
     build_equip_urls,
     build_rune_urls,

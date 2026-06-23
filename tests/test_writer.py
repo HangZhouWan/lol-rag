@@ -2,8 +2,8 @@
 import os
 import tempfile
 import pytest
-from src.writer import hero_to_markdown, equip_to_markdown, rune_to_markdown, write_markdown, sanitize_filename
-from src.models import Hero, Equipment, Rune, Skill
+from src.scraper.writer import hero_to_markdown, equip_to_markdown, rune_to_markdown, write_markdown, sanitize_filename
+from src.scraper.models import Hero, Equipment, Rune, Skill
 
 
 class TestSanitizeFilename:

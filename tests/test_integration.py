@@ -6,10 +6,10 @@ import tempfile
 import pytest
 from unittest.mock import AsyncMock, patch
 
-from src.orchestrator import Orchestrator
-from src.writer import sanitize_filename, hero_to_markdown, write_markdown, equip_to_markdown, rune_to_markdown
-from src.models import Hero, Equipment, Rune, Skill
-from src.url_builder import detect_category, build_hero_urls
+from src.scraper.orchestrator import Orchestrator
+from src.scraper.writer import sanitize_filename, hero_to_markdown, write_markdown, equip_to_markdown, rune_to_markdown
+from src.scraper.models import Hero, Equipment, Rune, Skill
+from src.scraper.url_builder import detect_category, build_hero_urls
 
 
 class TestIntegration:

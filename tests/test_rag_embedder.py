@@ -7,7 +7,7 @@ class TestEmbedder:
         """测试 query embedding 返回 float 列表"""
         from src.rag.embedder import Embedder
 
-        embedder = Embedder(model_name="BAAI/bge-small-zh-1.5", device="cpu")
+        embedder = Embedder(model_name="BAAI/bge-small-zh-v1.5", device="cpu")
         vec = embedder.embed_query("测试问题")
         assert isinstance(vec, list)
         assert len(vec) > 0
@@ -17,7 +17,7 @@ class TestEmbedder:
         """测试批量文档 embedding"""
         from src.rag.embedder import Embedder
 
-        embedder = Embedder(model_name="BAAI/bge-small-zh-1.5", device="cpu")
+        embedder = Embedder(model_name="BAAI/bge-small-zh-v1.5", device="cpu")
         texts = ["文档内容A", "文档内容B", "文档内容C"]
         vecs = embedder.embed_documents(texts)
         assert isinstance(vecs, list)
@@ -30,7 +30,7 @@ class TestEmbedder:
         """测试维度属性返回正确的值"""
         from src.rag.embedder import Embedder
 
-        embedder = Embedder(model_name="BAAI/bge-small-zh-1.5", device="cpu")
+        embedder = Embedder(model_name="BAAI/bge-small-zh-v1.5", device="cpu")
         dim = embedder.dimension
         assert isinstance(dim, int)
         assert dim == 512  # bge-small-zh-1.5 维度
@@ -40,7 +40,7 @@ class TestEmbedder:
         from src.rag.embedder import Embedder
 
         embedder = Embedder(
-            model_name="BAAI/bge-small-zh-1.5", device="cpu", normalize=True
+            model_name="BAAI/bge-small-zh-v1.5", device="cpu", normalize=True
         )
         vec = embedder.embed_query("测试")
         norm = np.linalg.norm(vec)
@@ -50,7 +50,7 @@ class TestEmbedder:
         """测试 query embedding 和文档 embedding 对相同文本产生不同向量（BGE 前缀效果）"""
         from src.rag.embedder import Embedder
 
-        embedder = Embedder(model_name="BAAI/bge-small-zh-1.5", device="cpu")
+        embedder = Embedder(model_name="BAAI/bge-small-zh-v1.5", device="cpu")
         text = "冰霜之心"
         query_vec = embedder.embed_query(text)    # 带 query 前缀
         doc_vecs = embedder.embed_documents([text])  # 不带前缀

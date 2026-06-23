@@ -3,7 +3,7 @@ import tempfile
 import os
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch, call
-from src.orchestrator import Orchestrator
+from src.scraper.orchestrator import Orchestrator
 
 
 class TestOrchestrator:
@@ -63,7 +63,7 @@ class TestOrchestrator:
 
         orch.fetcher.fetch_all = mock_fetch_all
 
-        with patch("src.orchestrator.build_all_urls", return_value=(hero_urls, [], [])):
+        with patch("src.scraper.orchestrator.build_all_urls", return_value=(hero_urls, [], [])):
             stats = await orch.run()
 
         assert stats["total"] == 1
@@ -84,8 +84,8 @@ class TestOrchestrator:
         orch.fetcher.fetch_all = mock_fetch_all
 
         with (
-            patch("src.orchestrator.build_all_urls", return_value=(hero_urls, [], [])),
-            patch("src.orchestrator.parse_hero_page", return_value=None),
+            patch("src.scraper.orchestrator.build_all_urls", return_value=(hero_urls, [], [])),
+            patch("src.scraper.orchestrator.parse_hero_page", return_value=None),
         ):
             stats = await orch.run()
 
@@ -130,12 +130,12 @@ class TestOrchestrator:
         rune_mock.name = "TestRune"
 
         with (
-            patch("src.orchestrator.build_all_urls", return_value=(hero_urls, equip_urls, rune_urls)),
-            patch("src.orchestrator.parse_hero_page", return_value=hero_mock),
-            patch("src.orchestrator.parse_rune_page", return_value=rune_mock),
-            patch("src.orchestrator.hero_to_markdown", return_value="# markdown"),
-            patch("src.orchestrator.rune_to_markdown", return_value="# markdown"),
-            patch("src.orchestrator.write_markdown"),
+            patch("src.scraper.orchestrator.build_all_urls", return_value=(hero_urls, equip_urls, rune_urls)),
+            patch("src.scraper.orchestrator.parse_hero_page", return_value=hero_mock),
+            patch("src.scraper.orchestrator.parse_rune_page", return_value=rune_mock),
+            patch("src.scraper.orchestrator.hero_to_markdown", return_value="# markdown"),
+            patch("src.scraper.orchestrator.rune_to_markdown", return_value="# markdown"),
+            patch("src.scraper.orchestrator.write_markdown"),
         ):
             stats = await orch.run()
 

@@ -1,1 +1,1 @@
-"""LOL Wiki Scraper — RAG 资料数据源构建工具"""
+"""LOL Wiki Scraper — RAG 数据源模块"""

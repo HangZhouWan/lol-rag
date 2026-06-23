@@ -52,7 +52,7 @@ def temp_chroma_dir():
 @pytest.fixture
 def embedder():
     from src.rag.embedder import Embedder
-    return Embedder(model_name="BAAI/bge-small-zh-1.5", device="cpu")
+    return Embedder(model_name="BAAI/bge-small-zh-v1.5", device="cpu")
 
 
 class TestVectorStoreManager:

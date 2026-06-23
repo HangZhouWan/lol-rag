@@ -3,8 +3,8 @@ import pytest
 import asyncio
 import aiohttp
 from unittest.mock import AsyncMock, patch, MagicMock
-from src.fetcher import Fetcher
-from src.config import MAX_RETRIES, RETRY_BACKOFF
+from src.scraper.fetcher import Fetcher
+from src.scraper.config import MAX_RETRIES, RETRY_BACKOFF
 
 
 class TestFetcher:

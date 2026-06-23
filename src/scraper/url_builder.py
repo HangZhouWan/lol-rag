@@ -2,7 +2,7 @@
 
 import urllib.parse
 
-from src.config import (
+from .config import (
     HERO_DETAIL_TMPL,
     EQUIP_DETAIL_TMPL,
     RUNE_DETAIL_TMPL,

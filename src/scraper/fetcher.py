@@ -3,7 +3,7 @@
 import asyncio
 import logging
 import aiohttp
-from src.config import REQUEST_DELAY, MAX_RETRIES, RETRY_BACKOFF, CONCURRENCY, REQUEST_TIMEOUT
+from .config import REQUEST_DELAY, MAX_RETRIES, RETRY_BACKOFF, CONCURRENCY, REQUEST_TIMEOUT
 
 logger = logging.getLogger(__name__)
 

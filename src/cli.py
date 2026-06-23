@@ -5,8 +5,8 @@ import asyncio
 import logging
 import sys
 
-from src.config import OUTPUT_DIR, CONCURRENCY, REQUEST_DELAY, MAX_RETRIES
-from src.orchestrator import Orchestrator
+from src.scraper.config import OUTPUT_DIR, CONCURRENCY, REQUEST_DELAY, MAX_RETRIES
+from src.scraper.orchestrator import Orchestrator
 
 logger = logging.getLogger(__name__)
 

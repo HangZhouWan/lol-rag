@@ -20,7 +20,7 @@ class RAGConfig:
     deepseek_temperature: float = 0.3
 
     # Embedding
-    embedding_model: str = "BAAI/bge-small-zh-1.5"
+    embedding_model: str = "BAAI/bge-small-zh-v1.5"
     embedding_device: str = "cpu"
     embedding_normalize: bool = True
 
@@ -84,7 +84,7 @@ class RAGConfig:
             deepseek_model=_str("DEEPSEEK_MODEL", "deepseek-chat"),
             deepseek_max_tokens=_int("DEEPSEEK_MAX_TOKENS", 2048),
             deepseek_temperature=_float("DEEPSEEK_TEMPERATURE", 0.3),
-            embedding_model=_str("EMBEDDING_MODEL", "BAAI/bge-small-zh-1.5"),
+            embedding_model=_str("EMBEDDING_MODEL", "BAAI/bge-small-zh-v1.5"),
             embedding_device=_str("EMBEDDING_DEVICE", "cpu"),
             embedding_normalize=_bool("EMBEDDING_NORMALIZE", True),
             chroma_persist_dir=_str("CHROMA_PERSIST_DIR", "data/chroma_db"),

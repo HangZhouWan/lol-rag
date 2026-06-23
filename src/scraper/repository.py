@@ -4,8 +4,8 @@ import json
 import logging
 import os
 from datetime import datetime, timezone, timedelta
-from src.config import FETCH_RECORD_FILE, MAX_RETRIES
-from src.models import FetchRecord
+from .config import FETCH_RECORD_FILE, MAX_RETRIES
+from .models import FetchRecord
 
 logger = logging.getLogger(__name__)
 

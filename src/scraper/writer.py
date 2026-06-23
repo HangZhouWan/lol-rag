@@ -3,7 +3,7 @@
 import os
 import re
 import logging
-from src.models import Hero, Equipment, Rune
+from .models import Hero, Equipment, Rune
 
 logger = logging.getLogger(__name__)
 

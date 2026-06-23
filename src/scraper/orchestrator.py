@@ -5,15 +5,15 @@ import logging
 import os
 from datetime import datetime, timezone, timedelta
 
-from src.config import OUTPUT_DIR, CONCURRENCY, REQUEST_DELAY, MAX_RETRIES, RETRY_BACKOFF
-from src.fetcher import Fetcher
-from src.parser import parse_hero_page, parse_equip_page, parse_rune_page
-from src.repository import FetchRepository
-from src.writer import (
+from .config import OUTPUT_DIR, CONCURRENCY, REQUEST_DELAY, MAX_RETRIES, RETRY_BACKOFF
+from .fetcher import Fetcher
+from .parser import parse_hero_page, parse_equip_page, parse_rune_page
+from .repository import FetchRepository
+from .writer import (
     hero_to_markdown, equip_to_markdown, rune_to_markdown,
     write_markdown, sanitize_filename,
 )
-from src.url_builder import build_all_urls, detect_category, get_category_dir
+from .url_builder import build_all_urls, detect_category, get_category_dir
 
 logger = logging.getLogger(__name__)
 TZ = timezone(timedelta(hours=8))
