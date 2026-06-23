@@ -20,7 +20,7 @@ EMBEDDING_NORMALIZE=true
 CHROMA_PERSIST_DIR=data/chroma_db
 CHROMA_COLLECTION=lol-wiki
 RETRIEVAL_TOP_K=10
-RERANK_TOP_K=3
+RERANK_TOP_K=5
 RERANK_MODEL=BAAI/bge-reranker-base
 HYBRID_BM25_WEIGHT=0.3
 MAX_HISTORY_TURNS=10
@@ -53,7 +53,7 @@ def test_config_loads_all_values(temp_env_file, monkeypatch):
     assert config.chroma_persist_dir == "data/chroma_db"
     assert config.chroma_collection == "lol-wiki"
     assert config.retrieval_top_k == 10
-    assert config.rerank_top_k == 3
+    assert config.rerank_top_k == 5
     assert config.rerank_model == "BAAI/bge-reranker-base"
     assert config.hybrid_bm25_weight == 0.3
     assert config.max_history_turns == 10
@@ -76,7 +76,7 @@ def test_config_default_values():
     assert config.embedding_model == "BAAI/bge-small-zh-v1.5"
     assert config.embedding_device == "cpu"
     assert config.retrieval_top_k == 10
-    assert config.rerank_top_k == 3
+    assert config.rerank_top_k == 5
     assert config.max_history_turns == 10
     assert config.max_input_length == 2000
 

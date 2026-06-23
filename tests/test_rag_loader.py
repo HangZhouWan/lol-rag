@@ -10,7 +10,7 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures" / "rag"
 def test_load_documents_returns_list():
     docs = load_documents(str(FIXTURES_DIR))
     assert isinstance(docs, list)
-    assert len(docs) >= 3  # 至少 3 个 test fixture 文件
+    assert len(docs) >= 4  # 至少 4 个 test fixture 文件（2 heroes + 1 equipment + 1 rune）
 
 
 def test_documents_have_metadata():
@@ -37,8 +37,9 @@ def test_categories_are_correct():
 
 def test_hero_document_name():
     docs = load_documents(str(FIXTURES_DIR))
-    hero_doc = next(d for d in docs if d.metadata["category"] == "heroes")
-    assert hero_doc.metadata["name"] == "九尾妖狐"
+    hero_names = {d.metadata["name"] for d in docs if d.metadata["category"] == "heroes"}
+    assert "九尾妖狐" in hero_names
+    assert "爆破鬼才" in hero_names
 
 
 def test_equipment_document_name():

@@ -92,24 +92,19 @@ def chunk_hero(doc: Document) -> list[Document]:
             m["section"] = "attributes"
             chunks.append(Document(page_content=body.strip(), metadata=m))
         elif "技能" in title or h3_subs:
-            # 技能区块 — 按 ### 拆分为独立技能
-            for sub_level, sub_title, sub_body in h3_subs:
+            if h3_subs:
+                # 将所有技能（被动 + Q/W/E/R）作为一个组合 chunk，
+                # 确保检索时 LLM 能获取完整的英雄技能信息
                 m = deepcopy(metadata)
-                if "被动" in sub_title:
-                    m["section"] = "passive_skill"
-                else:
-                    m["section"] = "skill"
-                    # 提取技能键名（Q/W/E/R）
-                    skill_key = sub_title.strip().split("：")[0].split(":")[0].strip()
-                    m["skill_key"] = skill_key if skill_key else sub_title[:4]
+                m["section"] = "skills"
                 chunks.append(
                     Document(
-                        page_content=f"## {sub_title}\n\n{sub_body.strip()}",
+                        page_content=f"## {title}\n\n{body.strip()}",
                         metadata=m,
                     )
                 )
-            # 如果技能区块没有 h3 子标题，整个作为 skill
-            if not h3_subs and body.strip():
+            elif body.strip():
+                # 回退：没有 h3 子标题的技能区块
                 m = deepcopy(metadata)
                 if "被动" in title:
                     m["section"] = "passive_skill"

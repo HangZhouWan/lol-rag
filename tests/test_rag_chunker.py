@@ -26,14 +26,15 @@ class TestHeroChunking:
     def test_hero_produces_correct_chunk_count(self):
         doc = _load_fixture("heroes", "九尾妖狐")
         chunks = chunk_hero(doc)
-        assert len(chunks) >= 5, f"Expected >=5 chunks, got {len(chunks)}"
+        # overview + background + attributes + skills = 4
+        assert len(chunks) == 4, f"Expected 4 chunks, got {len(chunks)}"
 
     def test_hero_chunks_have_section_metadata(self):
         doc = _load_fixture("heroes", "九尾妖狐")
         chunks = chunk_hero(doc)
         sections = {c.metadata.get("section") for c in chunks}
         assert "overview" in sections
-        assert "skill" in sections or "passive_skill" in sections
+        assert "skills" in sections, f"Expected 'skills' section, got: {sections}"
 
     def test_hero_chunks_preserve_source(self):
         doc = _load_fixture("heroes", "九尾妖狐")
@@ -43,14 +44,38 @@ class TestHeroChunking:
             assert chunk.metadata["category"] == "heroes"
             assert chunk.metadata["name"] == "九尾妖狐"
 
-    def test_hero_passive_identified(self):
+    def test_hero_passive_in_skills_chunk(self):
         doc = _load_fixture("heroes", "九尾妖狐")
         chunks = chunk_hero(doc)
-        passive_chunks = [
-            c for c in chunks if c.metadata.get("section") == "passive_skill"
+        skills_chunks = [
+            c for c in chunks if c.metadata.get("section") == "skills"
         ]
-        assert len(passive_chunks) >= 1
-        assert "被动" in passive_chunks[0].page_content or "吸精" in passive_chunks[0].page_content
+        assert len(skills_chunks) == 1
+        skills_content = skills_chunks[0].page_content
+        assert "被动" in skills_content or "吸精" in skills_content
+        # 确保所有 5 个技能都在同一个 chunk 中
+        assert "Q" in skills_content or "欺诈宝珠" in skills_content
+        assert "W" in skills_content or "妖狐业火" in skills_content
+        assert "E" in skills_content or "魅惑妖术" in skills_content
+        assert "R" in skills_content or "灵魂突袭" in skills_content
+
+    def test_hero_skills_chunk_contains_all_skills(self):
+        """验证技能 chunk 包含英雄的所有技能（被动+Q/W/E/R）"""
+        doc = _load_fixture("heroes", "爆破鬼才")
+        chunks = chunk_hero(doc)
+        skills_chunks = [
+            c for c in chunks if c.metadata.get("section") == "skills"
+        ]
+        assert len(skills_chunks) == 1, (
+            f"Expected exactly 1 skills chunk, got {len(skills_chunks)}"
+        )
+        skills_content = skills_chunks[0].page_content
+        # 验证所有 5 个技能都在同一个 chunk 中
+        assert "一触即发" in skills_content, "Missing passive skill"
+        assert "弹跳炸弹" in skills_content, "Missing Q skill"
+        assert "定点爆破" in skills_content, "Missing W skill"
+        assert "海克斯爆破雷区" in skills_content, "Missing E skill"
+        assert "科学的地狱火炮" in skills_content, "Missing R skill"
 
 
 class TestEquipmentChunking:
@@ -85,7 +110,7 @@ class TestChunkDocuments:
             _load_fixture("runes", "强攻"),
         ]
         all_chunks = chunk_documents(docs)
-        assert len(all_chunks) >= (5 + 2 + 1)  # 英雄 ≥5, 装备 ≥2, 符文 1
+        assert len(all_chunks) >= (4 + 2 + 1)  # 英雄 4, 装备 ≥2, 符文 1
 
     def test_chunk_documents_handles_empty_list(self):
         chunks = chunk_documents([])
