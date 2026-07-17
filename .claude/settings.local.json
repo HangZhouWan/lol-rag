@@ -1,25 +1,4 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(git add *)",
-      "Bash(git commit -m 'feat: project skeleton setup *)",
-      "Bash(git rm *)",
-      "Bash(git commit *)",
-      "Bash(git *)",
-      "Bash(python *)",
-      "Bash(python3 *)",
-      "Bash(pip list *)",
-      "Bash(pip3 install *)",
-      "Bash(pip install *)",
-      "Bash(apt list *)",
-      "Bash(dpkg -l)",
-      "Bash(.venv/bin/pip install *)",
-      "Bash(.venv/bin/python *)",
-      "Read(//root/.cache/huggingface/hub/**)",
-      "Bash(curl -sI --connect-timeout 10 \"https://hf-mirror.com/BAAI/bge-small-zh-1.5/resolve/main/config.json\")",
-      "Bash(curl -sI --connect-timeout 10 \"https://hf-mirror.com/BAAI/bge-small-zh-1.5\")"
-    ]
-  },
   "hooks": {
     "Notification": [
       {

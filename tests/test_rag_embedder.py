@@ -33,7 +33,7 @@ class TestEmbedder:
         embedder = Embedder(model_name="BAAI/bge-small-zh-v1.5", device="cpu")
         dim = embedder.dimension
         assert isinstance(dim, int)
-        assert dim == 512  # bge-small-zh-1.5 维度
+        assert dim == 512  # bge-small-zh-v1.5 维度
 
     def test_normalize_produces_unit_vectors(self):
         """测试归一化后向量模长为 1"""

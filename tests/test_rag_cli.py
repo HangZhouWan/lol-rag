@@ -70,7 +70,7 @@ class TestInputValidation:
         from src.rag.cli import validate_input
         is_valid, msg = validate_input("冰霜之心的被动是什么？")
         assert is_valid is True
-        assert msg == ""
+        assert msg == "冰霜之心的被动是什么？"
 
     def test_overly_long_input(self):
         from src.rag.cli import validate_input

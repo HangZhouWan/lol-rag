@@ -7,6 +7,8 @@
 
 from __future__ import annotations
 
+import os
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 import argparse
 import asyncio
 import logging
@@ -21,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 WELCOME = """
 ╔══════════════════════════════════════════╗
-║      欢迎使用 英雄联盟 RAG 助手            ║
+║      欢迎使用 英雄联盟 AI 查询助手            ║
 ║                                          ║
 ║  输入问题开始查询，输入 /help 查看帮助      ║
 ║  指令: /clear 清空历史  /quit 退出         ║
@@ -88,7 +90,7 @@ def validate_input(user_input: str, max_length: int = 2000) -> tuple[bool, str]:
     if len(stripped) <= 1:
         return False, "请输入更详细的问题"
 
-    return True, ""
+    return True, stripped
 
 
 async def process_query(

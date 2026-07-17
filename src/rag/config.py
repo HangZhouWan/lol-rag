@@ -30,7 +30,7 @@ class RAGConfig:
 
     # 检索
     retrieval_top_k: int = 10
-    rerank_top_k: int = 3
+    rerank_top_k: int = 5
     rerank_model: str = "BAAI/bge-reranker-base"
     hybrid_bm25_weight: float = 0.3
 
@@ -90,7 +90,7 @@ class RAGConfig:
             chroma_persist_dir=_str("CHROMA_PERSIST_DIR", "data/chroma_db"),
             chroma_collection=_str("CHROMA_COLLECTION", "lol-wiki"),
             retrieval_top_k=_int("RETRIEVAL_TOP_K", 10),
-            rerank_top_k=_int("RERANK_TOP_K", 3),
+            rerank_top_k=_int("RERANK_TOP_K", 5),
             rerank_model=_str("RERANK_MODEL", "BAAI/bge-reranker-base"),
             hybrid_bm25_weight=_float("HYBRID_BM25_WEIGHT", 0.3),
             max_history_turns=_int("MAX_HISTORY_TURNS", 10),
